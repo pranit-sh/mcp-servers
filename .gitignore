@@ -13,3 +13,4 @@
 # Ignore environment variable files
 **/.env
 **/.env.*
+.DS_Store
