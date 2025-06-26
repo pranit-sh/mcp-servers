@@ -1,0 +1,15 @@
+# Ignore dependency directories
+**/node_modules/
+
+# Ignore build outputs
+**/dist/
+
+# Ignore lock files
+**/package-lock.json
+
+# Ignore TypeScript build info (if using incremental builds)
+**/tsconfig.tsbuildinfo
+
+# Ignore environment variable files
+**/.env
+**/.env.*

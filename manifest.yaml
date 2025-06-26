@@ -1,0 +1,7 @@
+applications:
+  - name: jira-mcp-server
+    random-route: true
+    path: jira-mcp-server
+    memory: 128M
+    buildpacks:
+      - nodejs_buildpack
