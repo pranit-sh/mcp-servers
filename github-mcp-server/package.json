@@ -1,0 +1,26 @@
+{
+  "name": "github-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for interacting with Github",
+  "engines": {
+    "node": "20.x"
+  },
+  "license": "ISC",
+  "author": "Pranit Deshmukh",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "ts-node src/server.ts",
+    "build": "tsc && shx chmod +x dist/*.js",
+    "start": "node dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.1",
+    "axios": "^1.10.0",
+    "zod": "^3.25.67",
+    "zod-to-json-schema": "^3.24.6"
+  }
+}
