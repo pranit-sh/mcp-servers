@@ -1,0 +1,43 @@
+Finished:
+1. Jira
+2. Confluence
+3. Figma
+4. RAG
+
+Working:
+1. Github
+    - Get list of PRs
+        - number
+        - title
+        - html_url
+        - state
+        - draft
+        - merged
+        - created_at
+        - updated_at
+        - merged_at
+    - Get PR details
+        - number
+        - html_url
+        - locked
+        - state
+        - title
+        - user.login
+        - body
+        - created_at
+        - updated_at
+        - closed_at
+        - assignees
+        - requested_reviewers
+        - draft
+        - merged
+        - mergeable
+        - merged_by
+        - additions
+        - deletions
+        - changed_files
+        - mergeable_state
+        - base.ref
+        - head.ref
+        - comments
+        - review_comments

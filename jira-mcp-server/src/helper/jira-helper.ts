@@ -1,6 +1,14 @@
 import { z } from "zod";
 import axios from "axios";
-import { CommentSchema, CreateJiraIssueSchema, IssueDetailsSchema, ListTransitionsSchema, SearchIssuesSchema, TransitionSchema, UpdateJiraIssueSchema } from "../tools";
+import {
+  CommentSchema,
+  CreateJiraIssueSchema,
+  IssueDetailsSchema,
+  ListTransitionsSchema,
+  SearchIssuesSchema,
+  TransitionSchema,
+  UpdateJiraIssueSchema,
+} from "../tools";
 
 class JiraHelper {
   private baseUrl: string;
@@ -24,19 +32,21 @@ class JiraHelper {
     try {
       const response = await axios.post(apiUrl, body, { auth: this.getAuth() });
       const operationResult = {
-        status: 'success',
+        status: "success",
         data: {
           issueKey: response.data.key,
           issueId: response.data.id,
-        }
+        },
       };
       return operationResult;
     } catch (error) {
       const typedError = error as any;
       console.error("Error creating Jira issue:", typedError);
       const operationResult = {
-        status: 'error',
-        error: typedError.response ? typedError.response.data : typedError.message,
+        status: "error",
+        error: typedError.response
+          ? typedError.response.data
+          : typedError.message,
       };
       return operationResult;
     }
@@ -57,16 +67,18 @@ class JiraHelper {
     try {
       await axios.put(apiUrl, updateBody, { auth: this.getAuth() });
       const operationResult = {
-        status: 'success',
-        data: 'Issue updated successfully',
+        status: "success",
+        data: "Issue updated successfully",
       };
       return operationResult;
     } catch (error) {
       const typedError = error as any;
       console.error("Error updating Jira issue:", typedError);
       const operationResult = {
-        status: 'error',
-        error: typedError.response ? typedError.response.data : typedError.message,
+        status: "error",
+        error: typedError.response
+          ? typedError.response.data
+          : typedError.message,
       };
       return operationResult;
     }
@@ -89,28 +101,32 @@ class JiraHelper {
           id: comment.id,
           body: comment.body,
         })),
-        parent: response.data.fields.parent ? {
-          id: response.data.fields.parent.id,
-          key: response.data.fields.parent.key,
-        } : null,
+        parent: response.data.fields.parent
+          ? {
+              id: response.data.fields.parent.id,
+              key: response.data.fields.parent.key,
+            }
+          : null,
         subtasks: response.data.fields.subtasks.map((subtask: any) => ({
           id: subtask.id,
           key: subtask.key,
         })),
-      }
+      };
 
       const operationResult = {
-        status: 'success',
+        status: "success",
         data: data,
-      }
+      };
       return operationResult;
     } catch (error) {
       const typedError = error as any;
       console.error("Error fetching Jira issue:", typedError);
       const operationResult = {
-        status: 'error',
-        error: typedError.response ? typedError.response.data : typedError.message,
-      }
+        status: "error",
+        error: typedError.response
+          ? typedError.response.data
+          : typedError.message,
+      };
       return operationResult;
     }
   }
@@ -125,17 +141,19 @@ class JiraHelper {
         name: transition.name,
       }));
       const operationResult = {
-        status: 'success',
+        status: "success",
         data: transitions,
-      }
+      };
       return operationResult;
     } catch (error) {
       const typedError = error as any;
       console.error("Error listing transitions:", typedError);
       const operationResult = {
-        status: 'error',
-        error: typedError.response ? typedError.response.data : typedError.message,
-      }
+        status: "error",
+        error: typedError.response
+          ? typedError.response.data
+          : typedError.message,
+      };
       return operationResult;
     }
   }
@@ -151,17 +169,19 @@ class JiraHelper {
     try {
       await axios.post(apiUrl, transitionBody, { auth: this.getAuth() });
       const operationResult = {
-        status: 'success',
-        data: 'Issue transitioned successfully',
-      }
+        status: "success",
+        data: "Issue transitioned successfully",
+      };
       return operationResult;
     } catch (error) {
       const typedError = error as any;
       console.error("Error transitioning issue:", typedError);
       const operationResult = {
-        status: 'error',
-        error: typedError.response ? typedError.response.data : typedError.message,
-      }
+        status: "error",
+        error: typedError.response
+          ? typedError.response.data
+          : typedError.message,
+      };
       return operationResult;
     }
   }
@@ -175,17 +195,19 @@ class JiraHelper {
     try {
       await axios.post(apiUrl, commentBody, { auth: this.getAuth() });
       const operationResult = {
-        status: 'success',
-        data: 'Comment added successfully',
-      }
+        status: "success",
+        data: "Comment added successfully",
+      };
       return operationResult;
     } catch (error) {
       const typedError = error as any;
       console.error("Error adding comment:", typedError);
       const operationResult = {
-        status: 'error',
-        error: typedError.response ? typedError.response.data : typedError.message,
-      }
+        status: "error",
+        error: typedError.response
+          ? typedError.response.data
+          : typedError.message,
+      };
       return operationResult;
     }
   }
@@ -210,12 +232,12 @@ class JiraHelper {
         fields: issue.fields,
       }));
       const operationResult = {
-        status: 'success',
+        status: "success",
         data: {
           total: response.data.total,
           issues: issues,
-        }
-      }
+        },
+      };
       return operationResult;
     } catch (error) {
       const typedError = error as any;

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   CreatePRSchema,
+  GetCommitChecksSchema,
   GetCommitDetailsSchema,
   GetCommitHistorySchema,
   GetFileCommitHistorySchema,
@@ -21,7 +22,7 @@ class GithubHelper {
   private repo: string;
   private pat: string;
 
-  private GITHUB_API = "https://api.github.com/graphql";
+  private GITHUB_API = "https://github.tools.sap/api/graphql";
 
   constructor(args: [string, string, string]) {
     [this.owner, this.repo, this.pat] = args;
@@ -34,7 +35,7 @@ class GithubHelper {
       const after = body.after ?? null;
 
       const response = await axios.post(
-        "https://api.github.com/graphql",
+        "https://github.tools.sap/api/graphql",
         {
           query: SEARCH_PR_QUERY,
           variables: {
@@ -198,7 +199,7 @@ class GithubHelper {
   }
 
   async getPRDifference(body: z.infer<typeof GetPRDifferenceSchema>) {
-    const apiUrl = `https://github.com/${this.owner}/${this.repo}/pulls/${body.number}/files`;
+    const apiUrl = `https://github.tools.sap/${this.owner}/${this.repo}/pulls/${body.number}/files`;
     try {
       const response = await axios.get(apiUrl, {
         headers: {
@@ -228,7 +229,7 @@ class GithubHelper {
   }
 
   async createPullRequest(body: z.infer<typeof CreatePRSchema>) {
-    const apiUrl = `https://github.com/${this.owner}/${this.repo}/pulls`;
+    const apiUrl = `https://github.tools.sap/${this.owner}/${this.repo}/pulls`;
     try {
       const {
         head,
@@ -258,7 +259,7 @@ class GithubHelper {
 
       if (reviewers && Array.isArray(reviewers) && reviewers.length > 0) {
         await axios.post(
-          `https://api.github.com/repos/${this.owner}/${this.repo}/pulls/${pr_number}/requested_reviewers`,
+          `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/pulls/${pr_number}/requested_reviewers`,
           { reviewers },
           {
             headers: {
@@ -272,7 +273,7 @@ class GithubHelper {
 
       if (assignees && Array.isArray(assignees) && assignees.length > 0) {
         await axios.post(
-          `https://api.github.com/repos/${this.owner}/${this.repo}/issues/${pr_number}/assignees`,
+          `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/issues/${pr_number}/assignees`,
           { assignees },
           {
             headers: {
@@ -286,7 +287,7 @@ class GithubHelper {
 
       if (labels && Array.isArray(labels) && labels.length > 0) {
         await axios.post(
-          `https://api.github.com/repos/${this.owner}/${this.repo}/issues/${pr_number}/labels`,
+          `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/issues/${pr_number}/labels`,
           { labels },
           {
             headers: {
@@ -313,7 +314,7 @@ class GithubHelper {
 
   async updatePullRequest(body: z.infer<typeof UpdatePRSchema>) {
     const pr_number = body.number;
-    const apiUrl = `https://api.github.com/repos/${this.owner}/${this.repo}/pulls/${pr_number}`;
+    const apiUrl = `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/pulls/${pr_number}`;
     try {
       const patchPayload: any = {};
       if (body.title) patchPayload.title = body.title;
@@ -336,7 +337,7 @@ class GithubHelper {
       const labelsToAdd = newLabels.filter((l) => !currentLabels.includes(l));
       if (labelsToAdd.length > 0) {
         await axios.post(
-          `https://api.github.com/repos/${this.owner}/${this.repo}/issues/${pr_number}/labels`,
+          `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/issues/${pr_number}/labels`,
           { labels: labelsToAdd },
           {
             headers: {
@@ -359,7 +360,7 @@ class GithubHelper {
       );
       if (assigneesToAdd.length > 0) {
         await axios.post(
-          `https://api.github.com/repos/${this.owner}/${this.repo}/issues/${pr_number}/assignees`,
+          `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/issues/${pr_number}/assignees`,
           { assignees: assigneesToAdd },
           {
             headers: {
@@ -371,7 +372,7 @@ class GithubHelper {
         );
       }
 
-      const reviewersUrl = `https://api.github.com/repos/${this.owner}/${this.repo}/pulls/${pr_number}/requested_reviewers`;
+      const reviewersUrl = `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/pulls/${pr_number}/requested_reviewers`;
       const reviewersResp = await axios.get(reviewersUrl, {
         headers: {
           Authorization: `Bearer ${this.pat}`,
@@ -390,7 +391,7 @@ class GithubHelper {
       );
       if (reviewersToAdd.length > 0) {
         await axios.post(
-          `https://api.github.com/repos/${this.owner}/${this.repo}/pulls/${pr_number}/requested_reviewers`,
+          `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/pulls/${pr_number}/requested_reviewers`,
           { reviewers: reviewersToAdd },
           {
             headers: {
@@ -469,7 +470,7 @@ class GithubHelper {
   async getFileCommitHistory(body: z.infer<typeof GetFileCommitHistorySchema>) {
     const { filePath, branch, limit, page } = body;
 
-    const apiUrl = `https://api.github.com/repos/${this.owner}/${this.repo}/commits`;
+    const apiUrl = `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/commits`;
     try {
       const response = await axios.get(apiUrl, {
         headers: {
@@ -500,7 +501,7 @@ class GithubHelper {
   }
 
   async getCommitDetails(body: z.infer<typeof GetCommitDetailsSchema>) {
-    const apiUrl = `https://api.github.com/repos/${this.owner}/${this.repo}/commits/${body.sha}`;
+    const apiUrl = `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/commits/${body.sha}`;
     try {
       const response = await axios.get(apiUrl, {
         headers: {
@@ -534,6 +535,36 @@ class GithubHelper {
           patch: file.patch,
         })),
         url: commit.html_url,
+      };
+    } catch (error) {
+      const typedError = error as any;
+      console.error("Error fetching commit details:", typedError);
+      return typedError.response?.data || typedError.message;
+    }
+  }
+
+  async getCommitChecks(body: z.infer<typeof GetCommitChecksSchema>) {
+    const apiUrl = `https://github.tools.sap/api/repos/${this.owner}/${this.repo}/commits/${body.sha}/status`;
+    try {
+      const response = await axios.get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${this.pat}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      });
+
+      const data = response.data;
+
+      return {
+        state: data.state,
+        statuses: data.statuses.map((status) => ({
+          state: status.state,
+          description: status.description,
+          target_url: status.target_url,
+          context: status.context,
+        })),
+        url: data.url,
       };
     } catch (error) {
       const typedError = error as any;

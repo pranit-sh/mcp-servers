@@ -50,7 +50,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (request.params.name) {
       case "get_figma_image": {
         const { fileKey, nodeId } = GetFigmaImageSchema.parse(
-          request.params.input,
+          request.params.arguments,
         );
         const imageUrl = await figmaHelper.getFigmaImage(fileKey, nodeId);
         return {

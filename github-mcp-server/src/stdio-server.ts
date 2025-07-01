@@ -8,6 +8,7 @@ import {
 import { zodToJsonSchema } from "zod-to-json-schema";
 import {
   CreatePRSchema,
+  GetCommitChecksSchema,
   GetCommitDetailsSchema,
   GetCommitHistorySchema,
   GetFileCommitHistorySchema,
@@ -94,6 +95,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         name: "get_commit_details",
         description: "Use this tool to get commit details from commit hash.",
         inputSchema: zodToJsonSchema(GetCommitDetailsSchema),
+      },
+      {
+        name: "get_commit_checks",
+        description: "Use this tool to get checks details for a commit.",
+        inputSchema: zodToJsonSchema(GetCommitChecksSchema),
       },
     ],
   };
@@ -199,6 +205,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           request.params.arguments,
         );
         const operationResult = await githubHelper.getCommitDetails(parsedArgs);
+        return {
+          content: [
+            { type: "text", text: JSON.stringify(operationResult, null, 2) },
+          ],
+        };
+      }
+
+      case "get_commit_checks": {
+        const parsedArgs = GetCommitChecksSchema.parse(
+          request.params.arguments,
+        );
+        const operationResult = await githubHelper.getCommitChecks(parsedArgs);
         return {
           content: [
             { type: "text", text: JSON.stringify(operationResult, null, 2) },

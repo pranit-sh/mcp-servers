@@ -201,3 +201,7 @@ export const GetFileCommitHistorySchema = z.object({
 export const GetCommitDetailsSchema = z.object({
   sha: z.string().describe("The SHA of the commit to retrieve."),
 });
+
+export const GetCommitChecksSchema = z.object({
+  sha: z.string().describe("The SHA of the commit.."),
+});
